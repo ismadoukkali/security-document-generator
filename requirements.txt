@@ -1,0 +1,6 @@
+pdfkit==1.0.0
+streamlit==1.32.2
+requests==2.31.0
+markdown==3.6
+openai==1.13.3
+streamlit_ext
