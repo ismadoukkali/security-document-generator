@@ -380,7 +380,7 @@ def main():
 
     if generate_button and input_amazon_url:
         if input_additional_information != None:
-            prompt_addition = None
+            prompt_addition = ""
         else:
             prompt_addition = input_additional_information
 
