@@ -11,6 +11,11 @@ from pprint import pprint
 import os
 import shutil
 import streamlit_ext as ste
+import os
+import requests
+from urllib3.util.retry import Retry
+from urllib3 import PoolManager
+from pprint import pprint
 
 load_dotenv()
 client = OpenAI()
@@ -60,7 +65,6 @@ def create_button(filename):
                     f"Descargar_en_{country_emoji}.pdf",
                 )
 
-
 wipe_out_directory('generated_documents')
 
 def generate_response_stream(prev_prompt):
@@ -70,7 +74,7 @@ def generate_response_stream(prev_prompt):
         {"role": "system", "content": "Eres un asistente util experto en crear documentos de seguridad para productos online."},
         {"role": "user", "content": str(prev_prompt)}],
     stream=True,
-    max_tokens=1000)
+    max_tokens=800)
     full_text = ""
     for chunk in response:
  
@@ -86,29 +90,42 @@ def generate_response_gpt3(prev_prompt):
     messages=[
         {"role": "system", "content": "You are a helpful assistant"},
         {"role": "user", "content": str(prev_prompt)}],
-    max_tokens=1000
+    max_tokens=800
 )
     selection = response.choices[0].message.content
     return selection
 
 @st.cache_data
 def get_product(product_url):
-   payload = {
-      'source': 'amazon',
-      'user_agent_type': 'desktop',
-      'render': 'html',
-      'parse': True,
-      'url': product_url}
-   
-   response = requests.request(
-        'POST',
-        'https://realtime.oxylabs.io/v1/queries',
-        auth=(os.getenv('USER_NAME_OXYLABS'), os.getenv('PASSWORD_OXYLABS')), 
-        json=payload,
-   )
+    session = requests.Session()
 
-   pprint(response.json())
-   return response.json()
+    retries = Retry(total=5,  
+                    backoff_factor=1,  
+                    status_forcelist=[429, 500, 502, 503, 504],  # Status codes to retry
+                    allowed_methods=frozenset(['POST']))  # Allowed HTTP methods to retry
+
+    adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    payload = {
+        'source': 'amazon',
+        'user_agent_type': 'desktop',
+        'render': 'html',
+        'parse': True,
+        'url': product_url
+    }
+
+    response = session.post(
+        'https://realtime.oxylabs.io/v1/queries',
+        auth=(os.getenv('USER_NAME_OXYLABS'), os.getenv('PASSWORD_OXYLABS')),
+        json=payload,
+    )
+
+    pprint(response.json())
+    return response.json()
+
 
 def parse_json(json_data):
     result = json_data["results"][0]
@@ -139,6 +156,10 @@ La ficha, debe seguir la siguiente estructura:
 - Mantenimiento y cuidados: Consejos para la limpieza, almacenamiento y manejo adecuado del programador de riego para asegurar su larga vida útil.
 - Medidas de seguridad: Advertencias sobre los riesgos potenciales (como el riesgo de daños por agua o eléctricos) y cómo mitigarlos.
 - Disposición al final de su vida útil: Información sobre cómo deshacerse o reciclar el producto de manera responsable.
+
+Respondeme simplemente con la ficha de seguridad en formato 'Markdown'. No incluyas ``` al principio y final del markdown, solo dame el texto markdown.
+
+Solo incluye tres ### para los titulos de la estructura mencionana previamente. 
 
 Aquí información del producto. Ten en cuenta que el texto a sido extraído directamente de la página web, por lo que estará mal escrito:
 '''
@@ -394,9 +415,10 @@ def main():
                 parsed_json_data = parse_json(json_data)
                 pprint(parsed_json_data)
             except Exception as e:
-                text_container.warning('Ha habido un error al extraer el producto. Pruebe de nuevo porfavor.', icon='🚨')
+                text_container.warning('Amazon ha bloqueado la respuesta del servidor al extraer el producto. Pruebe de nuevo con el mismo link porfavor.', icon='🚨')
             
             st.text('\nProducto extraído! Pasando a generación con IA.')
+            print(parsed_json_data)
             product = parsed_json_data["Asin"]
             brand = parsed_json_data["Marca"]
             product_description = f""" 
