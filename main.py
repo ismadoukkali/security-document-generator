@@ -294,6 +294,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <style>
         body, html {{
             margin: 0;
