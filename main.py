@@ -11,11 +11,11 @@ from pprint import pprint
 import os
 import shutil
 import streamlit_ext as ste
-import os
 import requests
 from urllib3.util.retry import Retry
 from urllib3 import PoolManager
 from pprint import pprint
+import zipfile
 
 load_dotenv()
 client = OpenAI()
@@ -37,6 +37,13 @@ def wipe_out_directory(directory_path):
     else:
         print(f"The directory {directory_path} does not exist.")
 
+def zip_all_files_in_directory(directory_path, output_zip_file):
+    with zipfile.ZipFile(output_zip_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        for root, dirs, files in os.walk(directory_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, os.path.relpath(file_path, directory_path))
+
 def get_country_emoji(language):
 
             language_to_emoji = {
@@ -54,6 +61,7 @@ def get_country_emoji(language):
 
 def create_button(filename):
 
+        file = filename.split("generated_documents/")[1]
         language = filename.split('-')[1].split('.')[0]
         country_emoji = get_country_emoji(language)
 
@@ -62,7 +70,16 @@ def create_button(filename):
                 ste.download_button(
                     f"Descargar en {country_emoji}",
                     fp,
-                    f"Descargar_en_{country_emoji}.pdf",
+                    f"{file}",
+                )
+
+def create_download_all(zip_name, product):
+    with open(zip_name, "rb") as fp:
+            with st.sidebar:
+                ste.download_button(
+                    f"Descargar todos 🌍",
+                    fp,
+                    f"{product}-all.zip",
                 )
 
 wipe_out_directory('generated_documents')
@@ -74,7 +91,7 @@ def generate_response_stream(prev_prompt):
         {"role": "system", "content": "Eres un asistente util experto en crear documentos de seguridad para productos online."},
         {"role": "user", "content": str(prev_prompt)}],
     stream=True,
-    max_tokens=800)
+    max_tokens=1000)
     full_text = ""
     for chunk in response:
  
@@ -90,7 +107,7 @@ def generate_response_gpt3(prev_prompt):
     messages=[
         {"role": "system", "content": "You are a helpful assistant"},
         {"role": "user", "content": str(prev_prompt)}],
-    max_tokens=800
+    max_tokens=1000
 )
     selection = response.choices[0].message.content
     return selection
@@ -401,10 +418,10 @@ def main():
         st.warning("Tiene que introducir un link de amazon un 'Url de Amazon' para proseguir.", icon="⚠️")
 
     if generate_button and input_amazon_url:
-        if input_additional_information != None:
+        if input_additional_information is None:
             prompt_addition = ""
         else:
-            prompt_addition = input_additional_information
+            prompt_addition = "Incluye esta información con preferencia: " + input_additional_information
 
         st.text("")
         st.text("")
@@ -430,7 +447,7 @@ def main():
             st.text('\nGenerando texto...')
             executor = ThreadPoolExecutor(10)
             text_container.text("")
-            full_text = text_container.write_stream(generate_response_stream(prompt + product_description + prompt_addition))
+            full_text = text_container.write_stream(generate_response_stream(prompt + prompt_addition + product_description))
             
             persist_pdf(full_text, product, 'Spanish', brand)
             sidebar_doc = st.sidebar.caption("Encontrará en la siguiente sección todos los documentos de un producto traducidos en acorde. Espere unos segundos a que todos esten listos.")
@@ -449,7 +466,11 @@ def main():
                 sidebar_no_doc.empty()
                 for future in futures:
                     language_filename = future.result()
+                    print(language_filename)
                     create_button("generated_documents/" + language_filename)
+
+            zip_all_files_in_directory("generated_documents", "all.zip")
+            create_download_all("all.zip", product)
 
 if __name__ == "__main__":
     main()
