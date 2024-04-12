@@ -54,7 +54,7 @@ def get_country_emoji(language):
                 'French': '🇫🇷', # France
                 'Italian': '🇮🇹', # Italy
                 'Polish': '🇵🇱', # Poland
-                'Russian': '🇷🇺', # Russia
+                'Turkish': '🇹🇷', # Turkey
             }
 
             return language_to_emoji.get(language, '')
@@ -189,7 +189,7 @@ def return_html_language(language, brand):
     created_french = "Créé le:"
     created_italian = "Creato il:"
     created_polish = "Utworzono:"
-    created_russian = "Создано:"
+    created_turkish = "Oluşturuldu:"
 
     footer_html_portuguese = """
         <footer>
@@ -245,13 +245,13 @@ def return_html_language(language, brand):
         </html>
     """.format(brand=brand)
 
-    footer_html_russian = """
-            <footer>
-                <!-- Ваше содержимое подвала -->
-                <p>Торговая марка: {brand}<br> Производитель: Altadex S.A. <br> Адрес: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. España. <br> www.altadex.com - info@altadex.com <br> Контактный номер: +34 918457676 <br> </p>
-            </footer>
-        </body>
-        </html>
+    footer_html_turkish = """<footer>
+    <!-- Altbilginiz -->
+    <p>Ticari Marka: {brand}<br> Üretici: Altadex S.A. <br> Adres: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. İspanya. <br> www.altadex.com - info@altadex.com <br> İletişim Numarası: +34 918457676 <br> </p>
+</footer>
+</body>
+</html>
+
     """.format(brand=brand)
     
     if language == "Portuguese":
@@ -284,9 +284,9 @@ def return_html_language(language, brand):
         created = created_polish
         return footer_html, created
     
-    if language == "Russian":
-        footer_html = footer_html_russian
-        created = created_russian
+    if language == "Turkis":
+        footer_html = footer_html_turkish
+        created = created_turkish
         return footer_html, created
     
     footer_html = """
@@ -301,6 +301,70 @@ def return_html_language(language, brand):
     
     return footer_html, created
 
+# def markdown_to_pdf(markdown_text, output_filename, language, brand):
+    
+#     current_date = datetime.now().strftime("%d/%m/%Y")
+
+#     footer_html, created = return_html_language(language, brand)
+    
+#     header_html = f""" 
+# <!DOCTYPE html>
+# <html>
+# <head>
+#     <meta charset="UTF-8">
+#     <style>
+#         body, html {{
+#             margin: 0;
+#             padding: 0;
+#             height: 100%;
+#         }}
+#         .content {{
+#             min-height: 100%;
+#             position: relative;
+#             padding-bottom: 120px; /* Adjust based on footer height */
+#         }}
+#         img {{
+#             width: 30%;
+#             height: auto;
+#             padding-bottom: 50px;
+#         }}
+#         footer {{
+#             position: absolute;
+#             bottom: 0;
+#             width: 100%;
+#             height: 120px; /* Adjust based on your footer content */
+#             font-style: italic;
+#         }}
+#         .creation-date {{
+#             position: absolute;
+#             top: 0;
+#             right: 0;
+#             padding: 10px;
+#             font-style: italic;
+#             font-size:large;
+#         }}
+#     </style>
+# </head>
+# <body>
+# <div class="creation-date">{created} <br> {current_date}</div>
+# <img src="https://i.postimg.cc/DZwj5rnq/Logo-Altadex-1.png">
+# """
+
+#     markdown_text_with_image = markdown_text
+    
+
+#     html_text = markdown.markdown(markdown_text_with_image)
+
+#     full_html_text = header_html + html_text + footer_html
+
+#     print(full_html_text)    
+    
+#     options = {
+#         'encoding': "UTF-8"
+#     }
+    
+#     pdfkit.from_string(full_html_text, "generated_documents/" + output_filename, options=options)
+
 def markdown_to_pdf(markdown_text, output_filename, language, brand):
     
     current_date = datetime.now().strftime("%d/%m/%Y")
@@ -314,14 +378,14 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
     <meta charset="UTF-8">
     <style>
         body, html {{
-            margin: 0;
+            margin: 20px;  # Set the margin around the content
             padding: 0;
-            height: 100%;
+            height: calc(100% - 40px);  # Subtract top and bottom margins from the height
         }}
         .content {{
             min-height: 100%;
             position: relative;
-            padding-bottom: 120px; /* Adjust based on footer height */
+            padding-bottom: 120px;  # Adjust based on footer height
         }}
         img {{
             width: 30%;
@@ -332,7 +396,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 120px; /* Adjust based on your footer content */
+            height: 120px;  # Adjust based on your footer content
             font-style: italic;
         }}
         .creation-date {{
@@ -341,7 +405,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
             right: 0;
             padding: 10px;
             font-style: italic;
-            font-size:large;
+            font-size: large;
         }}
     </style>
 </head>
@@ -352,7 +416,6 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
 
     markdown_text_with_image = markdown_text
     
-
     html_text = markdown.markdown(markdown_text_with_image)
 
     full_html_text = header_html + html_text + footer_html
@@ -396,7 +459,7 @@ def generate_all(product):
     persist_pdf(full_text, product, 'Spanish', brand)
 
     futures = []
-    languages = ['Portuguese', 'English', 'German', 'French', 'Italian', 'Polish', 'Russian']
+    languages = ['Portuguese', 'English', 'German', 'French', 'Italian', 'Polish', 'Turkish']
     for lang in languages:
         future = executor.submit(generate_other_languages, full_text, product, lang, brand)
         futures.append(future)
@@ -458,7 +521,7 @@ def main():
         
             with st.sidebar:
                 futures = []
-                languages = ['Portuguese', 'English', 'German', 'French', 'Italian', 'Polish', 'Russian']
+                languages = ['Portuguese', 'English', 'German', 'French', 'Italian', 'Polish', 'Turkish']
                 for lang in languages:
                     future = executor.submit(generate_other_languages, full_text, product, lang, brand)
                     futures.append(future)
