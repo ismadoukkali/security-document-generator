@@ -284,7 +284,7 @@ def return_html_language(language, brand):
         created = created_polish
         return footer_html, created
     
-    if language == "Turkis":
+    if language == "Turkish":
         footer_html = footer_html_turkish
         created = created_turkish
         return footer_html, created
