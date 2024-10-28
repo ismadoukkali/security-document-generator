@@ -1,7 +1,6 @@
 import streamlit as st
 from openai import OpenAI
 from concurrent.futures import ThreadPoolExecutor
-from urllib.request import urlopen, Request
 from dotenv import load_dotenv
 import markdown
 import pdfkit
@@ -13,7 +12,6 @@ import shutil
 import streamlit_ext as ste
 import requests
 from urllib3.util.retry import Retry
-from urllib3 import PoolManager
 from pprint import pprint
 import zipfile
 
@@ -86,7 +84,7 @@ wipe_out_directory('generated_documents')
 
 def generate_response_stream(prev_prompt):
     response = client.chat.completions.create(
-    model="gpt-4-turbo-preview",
+    model="gpt-4o",
     messages=[
         {"role": "system", "content": "Eres un asistente util experto en crear documentos de seguridad para productos online."},
         {"role": "user", "content": str(prev_prompt)}],
@@ -103,7 +101,7 @@ def generate_response_stream(prev_prompt):
 
 def generate_response_gpt3(prev_prompt):
     response = client.chat.completions.create(
-    model="gpt-4-turbo-preview",
+    model="gpt-4o",
     messages=[
         {"role": "system", "content": "You are a helpful assistant"},
         {"role": "user", "content": str(prev_prompt)}],
@@ -133,10 +131,12 @@ def get_product(product_url):
         'parse': True,
         'url': product_url
     }
+    
+    print(payload)
 
     response = session.post(
         'https://realtime.oxylabs.io/v1/queries',
-        auth=(os.getenv('USER_NAME_OXYLABS'), os.getenv('PASSWORD_OXYLABS')),
+        auth=('puertas_Rycjt', 'Javiisma2002='),
         json=payload,
     )
 
@@ -145,23 +145,32 @@ def get_product(product_url):
 
 
 def parse_json(json_data):
-    result = json_data["results"][0]
-    asin = result["content"]["asin"]
-    brand = result["content"]["brand"]
-    product_name = result["content"]["product_name"]
-    bulletpoints = result["content"]["bullet_points"]
+    try:
+        result = json_data["results"][0]
+        content = result["content"]
+        
+        # Extract the required fields
+        asin = content.get("asin", "")
+        # Try to get brand first, if not available use manufacturer
+        brand = content.get("brand") or content.get("manufacturer", "")
+        product_name = content.get("product_name", "")
+        bulletpoints = content.get("bullet_points", "")
 
-    parsed_json = {"Asin": asin,
-                   "Marca": brand,
-                   "Nombre de Producto": product_name,
-                   "Información relevante": bulletpoints}
-    return parsed_json
+        parsed_json = {
+            "Asin": asin,
+            "Marca": brand,
+            "Nombre de Producto": product_name,
+            "Información relevante": bulletpoints
+        }
+        return parsed_json
+    except KeyError as e:
+        raise KeyError(f"Missing required field in JSON structure: {e}")
+    except Exception as e:
+        raise Exception(f"Error parsing JSON data: {e}")
 
 prompt = ''' 
 
 Basado en la siguiente información, genera una ficha de seguridad sobre el uso de este producto.
-
-Son artículos como aspersores de riego, programadores de riego, o pistolas de riego. Fabricados en plástico y/o metal.
 
 La ficha debe seguir la normativa GPSR (General Product Safety Regulation) impuesta por Amazon al igual que otro tipo de regulaciones.
 
@@ -176,9 +185,7 @@ La ficha, debe seguir la siguiente estructura:
 
 Respondeme simplemente con la ficha de seguridad en formato 'Markdown'. No incluyas ``` al principio y final del markdown, solo dame el texto markdown.
 
-Solo incluye tres ### para los titulos de la estructura mencionana previamente. 
-
-Aquí información del producto. Ten en cuenta que el texto a sido extraído directamente de la página web, por lo que estará mal escrito:
+Aquí la información del producto. Ten en cuenta que el texto a sido extraído directamente de la página web, por lo que podrá estar mal escrito:
 '''
 
 def return_html_language(language, brand):
@@ -194,7 +201,7 @@ def return_html_language(language, brand):
     footer_html_portuguese = """
         <footer>
             <!-- Seu conteúdo do rodapé -->
-            <p>Marca registrada: {brand} <br> Fabricante: Altadex S.A. <br> Endereço: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Espanha. <br> www.altadex.com - info@altadex.com <br> Número de contato: +34 918457676 <br> </p>
+            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Endereço: Ejemplo Dirección, Madrid. Espanha. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contato: +34 918457676 <br> </p>
         </footer>
     </body>
     </html>
@@ -203,7 +210,7 @@ def return_html_language(language, brand):
     footer_html_english = """
             <footer>
                 <!-- Your footer content -->
-                <p>Trademark: {brand} <br> Manufacturer: Altadex S.A. <br> Address: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Spain. <br> www.altadex.com - info@altadex.com <br> Contact number: +34 918457676 <br> </p>
+                <p>Trademark: {brand} <br> Manufacturer: Ejemplo S.A. <br> Address: Ejemplo Dirección, Madrid. Spain. <br> www.Ejemplo.com - info@Ejemplo.com <br> Contact number: +34 918457676 <br> </p>
             </footer>
         </body>
         </html>
@@ -212,7 +219,7 @@ def return_html_language(language, brand):
     footer_html_german = """
             <footer>
                 <!-- Ihr Footer-Inhalt -->
-                <p>Warenzeichen:{brand} <br> Hersteller: Altadex S.A. <br> Adresse: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Spanien. <br> www.altadex.com - info@altadex.com <br> Kontakt Nummer: +34 918457676 <br> </p>
+                <p>Warenzeichen:{brand} <br> Hersteller: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Spanien. <br> www.Ejemplo.com - info@Ejemplo.com <br> Kontakt Nummer: +34 918457676 <br> </p>
             </footer>
         </body>
         </html> 
@@ -221,7 +228,7 @@ def return_html_language(language, brand):
     footer_html_french = """
             <footer>
                 <!-- Votre contenu de pied de page -->
-                <p>Marque déposée: {brand} <br> Fabricant: Altadex S.A. <br> Adresse: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Espagne. <br> www.altadex.com - info@altadex.com <br> Numéro de contact: +34 918457676 <br> </p>
+                <p>Marque déposée: {brand} <br> Fabricant: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Espagne. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numéro de contact: +34 918457676 <br> </p>
             </footer>
         </body>
         </html>
@@ -230,7 +237,7 @@ def return_html_language(language, brand):
     footer_html_italian = """
             <footer>
                 <!-- Il tuo contenuto del piè di pagina -->
-                <p>Marchio registrato: {brand} <br> Produttore: Altadex S.A. <br> Indirizzo: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Spagna. <br> www.altadex.com - info@altadex.com <br> Numero di contatto: +34 918457676 <br> </p>
+                <p>Marchio registrato: {brand} <br> Produttore: Ejemplo S.A. <br> Indirizzo: Ejemplo Dirección, Madrid. Spagna. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numero di contatto: +34 918457676 <br> </p>
             </footer>
         </body>
         </html>
@@ -239,7 +246,7 @@ def return_html_language(language, brand):
     footer_html_polish = """
             <footer>
                 <!-- Twoja treść stopki -->
-                <p>Znak towarowy: {brand} <br> Producent: Altadex S.A. <br> Adres: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. Hiszpania. <br> www.altadex.com - info@altadex.com <br> Numer kontaktowy: +34 918457676 <br> </p>
+                <p>Znak towarowy: {brand} <br> Producent: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. Hiszpania. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numer kontaktowy: +34 918457676 <br> </p>
             </footer>
         </body>
         </html>
@@ -247,7 +254,7 @@ def return_html_language(language, brand):
 
     footer_html_turkish = """<footer>
     <!-- Altbilginiz -->
-    <p>Ticari Marka: {brand}<br> Üretici: Altadex S.A. <br> Adres: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. İspanya. <br> www.altadex.com - info@altadex.com <br> İletişim Numarası: +34 918457676 <br> </p>
+    <p>Ticari Marka: {brand}<br> Üretici: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. İspanya. <br> www.Ejemplo.com - info@Ejemplo.com <br> İletişim Numarası: +34 918457676 <br> </p>
 </footer>
 </body>
 </html>
@@ -292,7 +299,7 @@ def return_html_language(language, brand):
     footer_html = """
         <footer>
             <!-- Your footer content -->
-            <p>Marca registrada: {brand} <br> Fabricante: Altadex S.A. <br> Dirección: Calle Perfumería 7. 28770. Colmenar Viejo. Madrid. España. <br> www.altadex.com - info@altadex.com <br> Número de contacto: +34 918457676 <br> </p>
+            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Dirección: Ejemplo Dirección, Madrid. España. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contacto: +34 918457676 <br> </p>
         </footer>
     </body>
     </html>
@@ -300,70 +307,6 @@ def return_html_language(language, brand):
     created = "Fecha de creación:"
     
     return footer_html, created
-
-# def markdown_to_pdf(markdown_text, output_filename, language, brand):
-    
-#     current_date = datetime.now().strftime("%d/%m/%Y")
-
-#     footer_html, created = return_html_language(language, brand)
-    
-#     header_html = f""" 
-# <!DOCTYPE html>
-# <html>
-# <head>
-#     <meta charset="UTF-8">
-#     <style>
-#         body, html {{
-#             margin: 0;
-#             padding: 0;
-#             height: 100%;
-#         }}
-#         .content {{
-#             min-height: 100%;
-#             position: relative;
-#             padding-bottom: 120px; /* Adjust based on footer height */
-#         }}
-#         img {{
-#             width: 30%;
-#             height: auto;
-#             padding-bottom: 50px;
-#         }}
-#         footer {{
-#             position: absolute;
-#             bottom: 0;
-#             width: 100%;
-#             height: 120px; /* Adjust based on your footer content */
-#             font-style: italic;
-#         }}
-#         .creation-date {{
-#             position: absolute;
-#             top: 0;
-#             right: 0;
-#             padding: 10px;
-#             font-style: italic;
-#             font-size:large;
-#         }}
-#     </style>
-# </head>
-# <body>
-# <div class="creation-date">{created} <br> {current_date}</div>
-# <img src="https://i.postimg.cc/DZwj5rnq/Logo-Altadex-1.png">
-# """
-
-#     markdown_text_with_image = markdown_text
-    
-
-#     html_text = markdown.markdown(markdown_text_with_image)
-
-#     full_html_text = header_html + html_text + footer_html
-
-#     print(full_html_text)    
-    
-#     options = {
-#         'encoding': "UTF-8"
-#     }
-    
-#     pdfkit.from_string(full_html_text, "generated_documents/" + output_filename, options=options)
 
 def markdown_to_pdf(markdown_text, output_filename, language, brand):
     
@@ -396,7 +339,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
             position: absolute;
             bottom: 0;
             width: 100%;
-            height: 120px;  # Adjust based on your footer content
+            height: 10px;  # Adjust based on your footer content
             font-style: italic;
         }}
         .creation-date {{
@@ -411,9 +354,10 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
 </head>
 <body>
 <div class="creation-date">{created} <br> {current_date}</div>
-<img src="https://i.postimg.cc/DZwj5rnq/Logo-Altadex-1.png">
+<img src="https://i.postimg.cc/GptYK3Zk/tulogo.png">
 """
 
+### tu logo link - https://i.postimg.cc/GptYK3Zk/tulogo.png
     markdown_text_with_image = markdown_text
     
     html_text = markdown.markdown(markdown_text_with_image)
@@ -438,55 +382,39 @@ def generate_other_languages(text, product, language, brand):
     persist_pdf(text, product, language, brand)
     return f"{product}-{language}.pdf"
 
-def generate_all(product):
-    print('Retrieving product from Oxylabs...')
-    json_data = get_product(product)
-    parsed_json_data = parse_json(json_data)
-    pprint(parsed_json_data)
-    
-    print('\nRetrieved product! Passing to GPT.')
-    product = parsed_json_data["Asin"]
-    brand = parsed_json_data["Marca"]
-    product_description = f""" 
-    Nombre de Producto: {parsed_json_data["Nombre de Producto"]} \n
-    Marca: {parsed_json_data["Marca"]}
-    Informacion de producto: {parsed_json_data["Información relevante"]} \n
- """
-    
-    executor = ThreadPoolExecutor(10)
-    full_text = generate_response_stream(prompt + product_description)
-
-    persist_pdf(full_text, product, 'Spanish', brand)
-
-    futures = []
-    languages = ['Portuguese', 'English', 'German', 'French', 'Italian', 'Polish', 'Turkish']
-    for lang in languages:
-        future = executor.submit(generate_other_languages, full_text, product, lang, brand)
-        futures.append(future)
-
-    print('\nLoading documents in other languages...')
-
 
 def main():
-    title = st.header("Generador de Fichas de Seguridad Amazon")
-    subtitle = st.write("""👋 Bienvenido al Generador de Fichas de Seguridad de Amazon de Altadex S.A. 
-                        \n Este producto emplea Inteligencia Artificial para generar documentos de seguridad a escala. Inserte el <URL de Amazon> de un producto y recibirá como resultado un documento de seguridad. Tiene la opción de traducirlo en Español, Inglés, Francés, Portugés, Polaco y Ruso bajo el formato correspondiente.""")
+    title = st.header("AmzProof - Generador de Fichas de Seguridad")
+    subtitle = st.write("""👋 Bienvenido a AmzProof, el Generador de Fichas de Seguridad de Amazon de Apolo. 
+                        \n Este producto emplea Inteligencia Artificial para generar documentos de seguridad a escala. Inserte el ``<URL de Amazon>`` de un producto y recibirá como resultado un documento de seguridad. Este se traducirá al Español, Inglés, Francés, Portugés, Polaco y Ruso (al igual que otros 25 idiomas).""")
     input_amazon_url = st.text_input("Url de Amazon (Obligatorio)")
     input_additional_information = st.text_area("Información Adicional (Opcional)")
-    generate_button = st.button("Generar documentos")
+    generate_button = st.button("Generar fichas de seguridad")
     sidebar_title = st.sidebar.subheader("Documentos traducidos")
     sidebar_no_doc = st.sidebar.caption("No hay documentos disponible en este momento. Inserte un URL de amazon y genere la documentación pertinente.")
+
+    st.markdown("""
+    <style>
+        .reportview-container {
+            margin-top: -2em;
+        }
+        #MainMenu {visibility: hidden;}
+        .stDeployButton {display:none;}
+        footer {visibility: hidden;}
+        #stDecoration {display:none;}
+    </style>
+    """, unsafe_allow_html=True)
+                
 
     if generate_button and not input_amazon_url:
         st.warning("Tiene que introducir un link de amazon un 'Url de Amazon' para proseguir.", icon="⚠️")
 
-    if generate_button and input_amazon_url:
+    elif generate_button and input_amazon_url:
         if input_additional_information is None:
             prompt_addition = ""
         else:
             prompt_addition = "Incluye esta información con preferencia: " + input_additional_information
 
-        st.text("")
         st.text("")
         text_container = st.container()
         with text_container.status('Generando documento base...'):
@@ -534,6 +462,7 @@ def main():
 
             zip_all_files_in_directory("generated_documents", "all.zip")
             create_download_all("all.zip", product)
+
 
 if __name__ == "__main__":
     main()
