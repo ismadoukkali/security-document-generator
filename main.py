@@ -174,7 +174,7 @@ Basado en la información proporcionada, genera una ficha de seguridad sobre el 
 
 La ficha debe incluir las siguientes secciones en el orden especificado, sin utilizar listas numeradas:
 
-Descripción general del producto: Proporciona una breve descripción del producto, resaltando su función principal y cualquier uso previsto o contexto en el cual suele emplearse. Incluye también el nombre completo del producto y la marca registrada.
+Descripción general del producto: Proporciona una breve descripción del producto, resaltando su función principal y cualquier uso previsto o contexto en el cual suele emplearse. Incluye también el nombre completo del producto y la marca registrada en negrita.
 Materiales de fabricación: Detalla los materiales específicos empleados en la fabricación, como tipos de plástico, metal, u otros componentes, considerando aspectos de seguridad y durabilidad.
 Instrucciones de uso: Explica de forma clara cómo utilizar o instalar el producto, incluyendo cualquier precaución necesaria para evitar daños tanto al producto como al usuario.
 Mantenimiento y cuidados: Brinda consejos sobre limpieza, almacenamiento y manejo adecuado para garantizar la durabilidad y el funcionamiento seguro del producto.
