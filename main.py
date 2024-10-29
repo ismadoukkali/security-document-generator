@@ -170,17 +170,22 @@ def parse_json(json_data):
 
 prompt = ''' 
 
-Basado en la información proporcionada, genera una ficha de seguridad sobre el uso del producto en formato 'Markdown', que cumpla con las normativas GPSR (General Product Safety Regulation) exigidas por Amazon, así como otras regulaciones aplicables.
+Basado en la siguiente información, genera una ficha de seguridad sobre el uso de este producto.
 
-La ficha debe incluir las siguientes secciones en el orden especificado, sin utilizar listas numeradas:
+La ficha debe seguir la normativa GPSR (General Product Safety Regulation) impuesta por Amazon al igual que otro tipo de regulaciones.
 
-Descripción general del producto: Proporciona una breve descripción del producto, resaltando su función principal y cualquier uso previsto o contexto en el cual suele emplearse. Incluye también el nombre completo del producto y la marca registrada en negrita.
-Materiales de fabricación: Detalla los materiales específicos empleados en la fabricación, como tipos de plástico, metal, u otros componentes, considerando aspectos de seguridad y durabilidad.
-Instrucciones de uso: Explica de forma clara cómo utilizar o instalar el producto, incluyendo cualquier precaución necesaria para evitar daños tanto al producto como al usuario.
-Mantenimiento y cuidados: Brinda consejos sobre limpieza, almacenamiento y manejo adecuado para garantizar la durabilidad y el funcionamiento seguro del producto.
-Medidas de seguridad: Advierte sobre posibles riesgos asociados con el uso del producto (como riesgos eléctricos, mecánicos, ambientales o físicos) y cómo reducir estos riesgos al maximo.
-Disposición al final de su vida útil: Ofrece información sobre cómo desechar o reciclar el producto de manera segura y responsable.
-Por favor, responde únicamente con el texto en formato 'Markdown', sin utilizar ``` para el formato del código.
+La ficha, debe seguir la siguiente estructura:
+
+- Descripción general del producto: Incluirá una breve descripción del programador de riego, destacando su propósito principal (por ejemplo, automatizar el riego de jardines).
+- Materiales de fabricación: Se detallarán los materiales específicos utilizados, como tipos de plástico o metal, considerando su impacto en la seguridad y durabilidad.
+- Instrucciones de uso: Explicación clara de cómo instalar y programar el dispositivo, incluyendo cualquier precaución para evitar daños al producto o al usuario.
+- Mantenimiento y cuidados: Consejos para la limpieza, almacenamiento y manejo adecuado del programador de riego para asegurar su larga vida útil.
+- Medidas de seguridad: Advertencias sobre los riesgos potenciales (como el riesgo de daños por agua o eléctricos) y cómo mitigarlos.
+- Disposición al final de su vida útil: Información sobre cómo deshacerse o reciclar el producto de manera responsable.
+
+Respondeme simplemente con la ficha de seguridad en formato 'Markdown'. No incluyas ``` al principio y final del markdown, solo dame el texto markdown.
+
+Aquí la información del producto. Ten en cuenta que el texto a sido extraído directamente de la página web, por lo que podrá estar mal escrito:
 '''
 
 def return_html_language(language, brand):
@@ -196,7 +201,7 @@ def return_html_language(language, brand):
     footer_html_portuguese = """
         <footer>
             <!-- Seu conteúdo do rodapé -->
-            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Endereço: Ejemplo Dirección, Madrid. Espanha. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contato: +34 999999XX <br> </p>
+            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Endereço: Ejemplo Dirección, Madrid. Espanha. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contato: +34 999999XXX <br> </p>
         </footer>
     </body>
     </html>
@@ -205,7 +210,7 @@ def return_html_language(language, brand):
     footer_html_english = """
             <footer>
                 <!-- Your footer content -->
-                <p>Trademark: {brand} <br> Manufacturer: Ejemplo S.A. <br> Address: Ejemplo Dirección, Madrid. Spain. <br> www.Ejemplo.com - info@Ejemplo.com <br> Contact number: +34 999999XX <br> </p>
+                <p>Trademark: {brand} <br> Manufacturer: Ejemplo S.A. <br> Address: Ejemplo Dirección, Madrid. Spain. <br> www.Ejemplo.com - info@Ejemplo.com <br> Contact number: +34 999999XXX <br> </p>
             </footer>
         </body>
         </html>
@@ -214,7 +219,7 @@ def return_html_language(language, brand):
     footer_html_german = """
             <footer>
                 <!-- Ihr Footer-Inhalt -->
-                <p>Warenzeichen:{brand} <br> Hersteller: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Spanien. <br> www.Ejemplo.com - info@Ejemplo.com <br> Kontakt Nummer: +34 999999XX <br> </p>
+                <p>Warenzeichen:{brand} <br> Hersteller: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Spanien. <br> www.Ejemplo.com - info@Ejemplo.com <br> Kontakt Nummer: +34 999999XXX <br> </p>
             </footer>
         </body>
         </html> 
@@ -223,7 +228,7 @@ def return_html_language(language, brand):
     footer_html_french = """
             <footer>
                 <!-- Votre contenu de pied de page -->
-                <p>Marque déposée: {brand} <br> Fabricant: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Espagne. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numéro de contact: +34 999999XX <br> </p>
+                <p>Marque déposée: {brand} <br> Fabricant: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Espagne. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numéro de contact: +34 999999XXX <br> </p>
             </footer>
         </body>
         </html>
@@ -232,7 +237,7 @@ def return_html_language(language, brand):
     footer_html_italian = """
             <footer>
                 <!-- Il tuo contenuto del piè di pagina -->
-                <p>Marchio registrato: {brand} <br> Produttore: Ejemplo S.A. <br> Indirizzo: Ejemplo Dirección, Madrid. Spagna. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numero di contatto: +34 999999XX <br> </p>
+                <p>Marchio registrato: {brand} <br> Produttore: Ejemplo S.A. <br> Indirizzo: Ejemplo Dirección, Madrid. Spagna. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numero di contatto: +34 999999XXX <br> </p>
             </footer>
         </body>
         </html>
@@ -241,7 +246,7 @@ def return_html_language(language, brand):
     footer_html_polish = """
             <footer>
                 <!-- Twoja treść stopki -->
-                <p>Znak towarowy: {brand} <br> Producent: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. Hiszpania. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numer kontaktowy: +34 999999XX <br> </p>
+                <p>Znak towarowy: {brand} <br> Producent: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. Hiszpania. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numer kontaktowy: +34 999999XXX <br> </p>
             </footer>
         </body>
         </html>
@@ -249,7 +254,7 @@ def return_html_language(language, brand):
 
     footer_html_turkish = """<footer>
     <!-- Altbilginiz -->
-    <p>Ticari Marka: {brand}<br> Üretici: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. İspanya. <br> www.Ejemplo.com - info@Ejemplo.com <br> İletişim Numarası: +34 999999XX <br> </p>
+    <p>Ticari Marka: {brand}<br> Üretici: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. İspanya. <br> www.Ejemplo.com - info@Ejemplo.com <br> İletişim Numarası: +34 999999XXX <br> </p>
 </footer>
 </body>
 </html>
@@ -294,7 +299,7 @@ def return_html_language(language, brand):
     footer_html = """
         <footer>
             <!-- Your footer content -->
-            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Dirección: Ejemplo Dirección, Madrid. España. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contacto: +34 918457676 <br> </p>
+            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Dirección: Ejemplo Dirección, Madrid. España. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contacto: +34 999999XXX <br> </p>
         </footer>
     </body>
     </html>
@@ -349,7 +354,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
 </head>
 <body>
 <div class="creation-date">{created} <br> {current_date}</div>
-<img src="https://i.postimg.cc/GptYK3Zk/tulogo.png">
+<img src="https://i.postimg.cc/VNGph5f4/logo-3.png">
 """
 
 ### tu logo link - https://i.postimg.cc/GptYK3Zk/tulogo.png
