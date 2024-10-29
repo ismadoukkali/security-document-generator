@@ -196,7 +196,7 @@ def return_html_language(language, brand):
     footer_html_portuguese = """
         <footer>
             <!-- Seu conteúdo do rodapé -->
-            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Endereço: Ejemplo Dirección, Madrid. Espanha. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contato: +34 918457676 <br> </p>
+            <p>Marca registrada: {brand} <br> Fabricante: Ejemplo S.A. <br> Endereço: Ejemplo Dirección, Madrid. Espanha. <br> www.Ejemplo.com - info@Ejemplo.com <br> Número de contato: +34 999999XX <br> </p>
         </footer>
     </body>
     </html>
@@ -205,7 +205,7 @@ def return_html_language(language, brand):
     footer_html_english = """
             <footer>
                 <!-- Your footer content -->
-                <p>Trademark: {brand} <br> Manufacturer: Ejemplo S.A. <br> Address: Ejemplo Dirección, Madrid. Spain. <br> www.Ejemplo.com - info@Ejemplo.com <br> Contact number: +34 918457676 <br> </p>
+                <p>Trademark: {brand} <br> Manufacturer: Ejemplo S.A. <br> Address: Ejemplo Dirección, Madrid. Spain. <br> www.Ejemplo.com - info@Ejemplo.com <br> Contact number: +34 999999XX <br> </p>
             </footer>
         </body>
         </html>
@@ -214,7 +214,7 @@ def return_html_language(language, brand):
     footer_html_german = """
             <footer>
                 <!-- Ihr Footer-Inhalt -->
-                <p>Warenzeichen:{brand} <br> Hersteller: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Spanien. <br> www.Ejemplo.com - info@Ejemplo.com <br> Kontakt Nummer: +34 918457676 <br> </p>
+                <p>Warenzeichen:{brand} <br> Hersteller: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Spanien. <br> www.Ejemplo.com - info@Ejemplo.com <br> Kontakt Nummer: +34 999999XX <br> </p>
             </footer>
         </body>
         </html> 
@@ -223,7 +223,7 @@ def return_html_language(language, brand):
     footer_html_french = """
             <footer>
                 <!-- Votre contenu de pied de page -->
-                <p>Marque déposée: {brand} <br> Fabricant: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Espagne. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numéro de contact: +34 918457676 <br> </p>
+                <p>Marque déposée: {brand} <br> Fabricant: Ejemplo S.A. <br> Adresse: Ejemplo Dirección, Madrid. Espagne. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numéro de contact: +34 999999XX <br> </p>
             </footer>
         </body>
         </html>
@@ -232,7 +232,7 @@ def return_html_language(language, brand):
     footer_html_italian = """
             <footer>
                 <!-- Il tuo contenuto del piè di pagina -->
-                <p>Marchio registrato: {brand} <br> Produttore: Ejemplo S.A. <br> Indirizzo: Ejemplo Dirección, Madrid. Spagna. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numero di contatto: +34 918457676 <br> </p>
+                <p>Marchio registrato: {brand} <br> Produttore: Ejemplo S.A. <br> Indirizzo: Ejemplo Dirección, Madrid. Spagna. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numero di contatto: +34 999999XX <br> </p>
             </footer>
         </body>
         </html>
@@ -241,7 +241,7 @@ def return_html_language(language, brand):
     footer_html_polish = """
             <footer>
                 <!-- Twoja treść stopki -->
-                <p>Znak towarowy: {brand} <br> Producent: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. Hiszpania. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numer kontaktowy: +34 918457676 <br> </p>
+                <p>Znak towarowy: {brand} <br> Producent: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. Hiszpania. <br> www.Ejemplo.com - info@Ejemplo.com <br> Numer kontaktowy: +34 999999XX <br> </p>
             </footer>
         </body>
         </html>
@@ -249,7 +249,7 @@ def return_html_language(language, brand):
 
     footer_html_turkish = """<footer>
     <!-- Altbilginiz -->
-    <p>Ticari Marka: {brand}<br> Üretici: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. İspanya. <br> www.Ejemplo.com - info@Ejemplo.com <br> İletişim Numarası: +34 918457676 <br> </p>
+    <p>Ticari Marka: {brand}<br> Üretici: Ejemplo S.A. <br> Adres: Ejemplo Dirección, Madrid. İspanya. <br> www.Ejemplo.com - info@Ejemplo.com <br> İletişim Numarası: +34 999999XX <br> </p>
 </footer>
 </body>
 </html>
