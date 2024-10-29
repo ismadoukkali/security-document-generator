@@ -354,7 +354,7 @@ def markdown_to_pdf(markdown_text, output_filename, language, brand):
 </head>
 <body>
 <div class="creation-date">{created} <br> {current_date}</div>
-<img src="https://i.postimg.cc/VNGph5f4/logo-3.png">
+<img src="https://i.postimg.cc/GptYK3Zk/tulogo.png">
 """
 
 ### tu logo link - https://i.postimg.cc/GptYK3Zk/tulogo.png
